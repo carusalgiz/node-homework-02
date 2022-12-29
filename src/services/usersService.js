@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const utils_1 = require("../utils/utils");
 const validation_1 = require("../utils/validation");
 const router = express_1.default.Router();
 const usersCollection = [];
@@ -110,7 +111,7 @@ router.get('/getAutoSuggestUsers', (req, res) => {
     }
     else {
         loginSubstring = req.query.login.toString();
-        const sortedUsers = usersCollection.sort((a, b) => (a.login > b.login) ? 1 : ((b.login > a.login) ? -1 : 0));
+        const sortedUsers = usersCollection.sort((a, b) => (0, utils_1.sorting)(a, b));
         const filteredBySubstring = sortedUsers.filter(user => user.login.includes(loginSubstring));
         res.json({ suggestedUsers: filteredBySubstring.slice(0, limit) });
     }

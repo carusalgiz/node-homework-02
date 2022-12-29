@@ -1,6 +1,6 @@
-import Joi, { ValidationResult } from 'joi';
+import Joi, { ValidationResult, ObjectSchema } from 'joi';
 
-const schema = Joi.object({
+const schema: ObjectSchema<unknown> = Joi.object({
     login: Joi.string()
         .alphanum()
         .min(6)
@@ -18,6 +18,6 @@ const schema = Joi.object({
         .required()
 });
 
-export function validate(data: any): ValidationResult {
+export function validate(data: {login: string, password: string, age: number}): ValidationResult {
     return schema.validate(data, { abortEarly: false });
 }

@@ -1,5 +1,4 @@
 {
-    "parser": "babel-eslint",
     "plugins": [
     ],
     "env": {
@@ -9,6 +8,8 @@
         "es6": true,
         "jest": true
     },
+    "parser": "@typescript-eslint/parser",
+    "extends": ["plugin:@typescript-eslint/recommended"],
     "parserOptions": {
         "ecmaFeatures": {
             "arrowFunctions": true,
@@ -26,8 +27,9 @@
             "restParams": true,
             "spread": true,
             "superInFunctions": true,
-            "templateStrings": true,
-        }
+            "templateStrings": true
+        },
+        "sourceType": "module"
     },
     "rules": {
         "no-debugger": 1,
@@ -225,7 +227,7 @@
             {
                 "ignoreUrls": true,
                 "ignoreComments": false,
-                "ignorePattern": "^\\s*(const|let|var)\\s+\\w+\\s+\\=\\s+\\/.*\\/(|i|g|m|ig|im|gm|igm);?$"
+                "ignorePattern": "^\\s*(const|let|var)\\s+\\w+\\s+=\\s+.*(|i|g|m|ig|im|gm|igm);?$"
             }
         ],
         "max-nested-callbacks": [
