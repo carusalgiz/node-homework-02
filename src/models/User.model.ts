@@ -5,19 +5,19 @@ export class UserModel extends Model {
     @PrimaryKey
     @AutoIncrement
     @Column(DataType.INTEGER)
-    id!: number;
+        id!: number;
 
     @Unique(true)
     @Column(DataType.TEXT)
-    login!: string;
+        login!: string;
 
     @Column(DataType.TEXT)
-    password!: string;
+        password!: string;
 
     @Column(DataType.INTEGER)
-    age!: number;
+        age!: number;
 
     @Default(false)
-    @Column({type: DataType.BOOLEAN, field: 'is_deleted'})
-    isDeleted!: boolean;
+    @Column({ type: DataType.BOOLEAN, field: 'is_deleted' })
+        isDeleted!: boolean;
 }

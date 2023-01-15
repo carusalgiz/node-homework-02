@@ -9,7 +9,7 @@ import { validate } from '../utils/validation';
 const router = express.Router();
 const usersService = new UsersService(UserModel);
 
-function userValidation(req: Request, res: Response, next: NextFunction): any {
+function userValidation(req: Request, res: Response, next: NextFunction): void {
     const validationResult: ValidationResult = validate(req.body);
 
     if (validationResult.error) {
@@ -24,11 +24,11 @@ function userValidation(req: Request, res: Response, next: NextFunction): any {
             errors
         });
     } else {
-        next();
-    }   
+        return next();
+    }
 }
 
-function autoSuggestMiddleware(req: Request, res: Response, next: NextFunction): any {
+function autoSuggestMiddleware(req: Request, res: Response, next: NextFunction): void {
     if (!req.query.login) {
         res.status(400).json({
             errorMessage: '"login" query parameter is missed'
@@ -38,7 +38,7 @@ function autoSuggestMiddleware(req: Request, res: Response, next: NextFunction):
             errorMessage: '"limit" query parameter is missed'
         });
     } else {
-         next();
+        return next();
     }
 }
 
@@ -80,7 +80,7 @@ router.get('/user/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/user/:id', async(req: Request, res: Response) => {
+router.delete('/user/:id', async (req: Request, res: Response) => {
     try {
         const user = await usersService.deleteUser(+req.params.id);
         res.json(user);
@@ -88,14 +88,14 @@ router.delete('/user/:id', async(req: Request, res: Response) => {
         res.status(404).json({
             errorMessage: `Unable to find a user with id: ${req.params.id}`
         });
-    };
+    }
 });
 
 router.get('/getAutoSuggestUsers', autoSuggestMiddleware, async (req: Request, res: Response) => {
     try {
         const limit: string = req.query.limit as string;
         const login: string = req.query.login as string;
-        
+
         const users = await usersService.getAutoSuggestUsers(+limit, login);
         res.json({ suggestedUsers: users });
     } catch (error) {

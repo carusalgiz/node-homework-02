@@ -9,7 +9,7 @@ const app: Express = express();
 const sequelize = new Sequelize('postgres://postgres:289824@localhost:5432/homework_db', {
     dialectModule: pg,
     dialectOptions: {
-      multipleStatements: true
+        multipleStatements: true
     },
     models: [UserModel]
 });
@@ -28,9 +28,9 @@ app.use(express.json());
 async function checkDBconnection() {
     try {
         await sequelize.authenticate();
-        console.log('Connection has been established successfully.');   
-        await tableInit();        
-        console.log('Initial data setted.');      
+        console.log('Connection has been established successfully.');
+        await tableInit();
+        console.log('Initial data setted.');
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
