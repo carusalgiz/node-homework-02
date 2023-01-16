@@ -3,11 +3,11 @@ import { ValidationResult, ValidationErrorItem } from 'joi';
 import { IErrorType } from '../interfaces/IErrorType';
 import { IUser } from '../interfaces/IUser';
 import { UserModel } from '../models/User.model';
-import UsersService from '../services/usersService';
+import UserService from '../services/userService';
 import { validate } from '../utils/validation';
 
 const router = express.Router();
-const usersService = new UsersService(UserModel);
+const usersService = new UserService(UserModel);
 
 function userValidationMiddleware(req: Request, res: Response, next: NextFunction): void {
     const validationResult: ValidationResult = validate(req.body);

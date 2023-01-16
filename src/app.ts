@@ -1,5 +1,5 @@
 import express, { Express } from 'express';
-import userController from './controllers/usersController';
+import userController from './controllers/userController';
 import * as pg from 'pg';
 import { Sequelize } from 'sequelize-typescript';
 import { promises } from 'fs';

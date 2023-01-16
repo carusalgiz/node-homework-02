@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { IUser } from '../interfaces/IUser';
 
-export default class UsersService {
+export default class UserService {
     userModel: any;
 
     constructor(userModel: any) {
