@@ -9,7 +9,7 @@ import { validate } from '../utils/validation';
 const router = express.Router();
 const usersService = new UsersService(UserModel);
 
-function userValidation(req: Request, res: Response, next: NextFunction): void {
+function userValidationMiddleware(req: Request, res: Response, next: NextFunction): void {
     const validationResult: ValidationResult = validate(req.body);
 
     if (validationResult.error) {
@@ -28,7 +28,7 @@ function userValidation(req: Request, res: Response, next: NextFunction): void {
     }
 }
 
-function autoSuggestMiddleware(req: Request, res: Response, next: NextFunction): void {
+function userSuggestMiddleware(req: Request, res: Response, next: NextFunction): void {
     if (!req.query.login) {
         res.status(400).json({
             errorMessage: '"login" query parameter is missed'
@@ -43,7 +43,7 @@ function autoSuggestMiddleware(req: Request, res: Response, next: NextFunction):
 }
 
 
-router.post('/user', userValidation, async (req: Request, res: Response) => {
+router.post('/user', userValidationMiddleware, async (req: Request, res: Response) => {
     try {
         const user = await usersService.create(req.body);
         res.json(user);
@@ -54,7 +54,7 @@ router.post('/user', userValidation, async (req: Request, res: Response) => {
     }
 });
 
-router.put('/user/:id', userValidation, async (req: Request, res: Response) => {
+router.put('/user/:id', userValidationMiddleware, async (req: Request, res: Response) => {
     try {
         const userDTO: IUser = {
             id: req.params.id,
@@ -91,7 +91,7 @@ router.delete('/user/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/getAutoSuggestUsers', autoSuggestMiddleware, async (req: Request, res: Response) => {
+router.get('/getAutoSuggestUsers', userSuggestMiddleware, async (req: Request, res: Response) => {
     try {
         const limit: string = req.query.limit as string;
         const login: string = req.query.login as string;
