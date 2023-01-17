@@ -1,49 +1,14 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { ValidationResult, ValidationErrorItem } from 'joi';
-import { IErrorType } from '../interfaces/IErrorType';
 import { IUser } from '../interfaces/IUser';
+import UserMiddleware from '../middleware/user.middleware';
 import { UserModel } from '../models/User.model';
 import UserService from '../services/userService';
-import { validate } from '../utils/validation';
 
 const router = express.Router();
 const usersService = new UserService(UserModel);
+const userMiddleware = new UserMiddleware();
 
-function userValidationMiddleware(req: Request, res: Response, next: NextFunction): void {
-    const validationResult: ValidationResult = validate(req.body);
-
-    if (validationResult.error) {
-        const errors = validationResult.error.details.reduce((result: IErrorType, error: ValidationErrorItem) => {
-            if (error?.context?.key) {
-                result[error.context.key] = error.message;
-            }
-            return result;
-        }, {});
-        res.status(400).json({
-            errorMessage: 'Some fields are filled incorectly. Fix your data and try again',
-            errors
-        });
-    } else {
-        return next();
-    }
-}
-
-function userSuggestMiddleware(req: Request, res: Response, next: NextFunction): void {
-    if (!req.query.login) {
-        res.status(400).json({
-            errorMessage: '"login" query parameter is missed'
-        });
-    } else if (!req.query.limit) {
-        res.status(400).json({
-            errorMessage: '"limit" query parameter is missed'
-        });
-    } else {
-        return next();
-    }
-}
-
-
-router.post('/user', userValidationMiddleware, async (req: Request, res: Response) => {
+router.post('/user', userMiddleware.userValidation, async (req: Request, res: Response) => {
     try {
         const user = await usersService.create(req.body);
         res.json(user);
@@ -54,7 +19,7 @@ router.post('/user', userValidationMiddleware, async (req: Request, res: Respons
     }
 });
 
-router.put('/user/:id', userValidationMiddleware, async (req: Request, res: Response) => {
+router.put('/user/:id', userMiddleware.userValidation, async (req: Request, res: Response) => {
     try {
         const userDTO: IUser = {
             id: req.params.id,
@@ -91,7 +56,7 @@ router.delete('/user/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/getAutoSuggestUsers', userSuggestMiddleware, async (req: Request, res: Response) => {
+router.get('/getAutoSuggestUsers', userMiddleware.userSuggest, async (req: Request, res: Response) => {
     try {
         const limit: string = req.query.limit as string;
         const login: string = req.query.login as string;

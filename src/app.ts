@@ -25,20 +25,19 @@ async function tableInit() {
 
 app.use(express.json());
 
-async function checkDBconnection() {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-        await tableInit();
-        console.log('Initial data setted.');
-    } catch (error) {
-        console.error('Unable to connect to the database:', error);
-    }
+async function setupDB() {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+    await tableInit();
+    console.log('Initial data setted.');
 }
 
-app.listen(3000, () => {
-    checkDBconnection();
-    console.log('[server]: Server is running at https://localhost:3000');
+setupDB().then(() => {
+    app.listen(3000, () => {
+        console.log('[server]: Server is running at https://localhost:3000');
+    });
+}).catch((error) => {
+    console.error('Unable to connect to the database:', error);
 });
 
 app.use('/users', userController);
