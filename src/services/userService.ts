@@ -1,11 +1,14 @@
 import { Op } from 'sequelize';
+import sequelize from '../config/connection';
 import { IUser } from '../interfaces/IUser';
 
 export default class UserService {
     userModel: any;
+    userGroupModel: any;
 
-    constructor(userModel: any) {
+    constructor(userModel: any, userGroupModel: any) {
         this.userModel = userModel;
+        this.userGroupModel = userGroupModel;
     }
 
     async get(id: number): Promise<any> {
@@ -30,14 +33,31 @@ export default class UserService {
     }
 
     async deleteUser(id: number): Promise<any> {
-        const [, db_user] = await this.userModel.update({
-            isDeleted: true
-        }, {
-            where: { id },
-            returning: true,
-            plain: true
-        });
-        return db_user;
+        const t = await sequelize.transaction();
+
+        try {
+            await this.userGroupModel.destroy({
+                where: { user_id: id },
+                returning: true,
+                plain: true,
+                transaction: t
+            });
+
+            const [, db_user] = await this.userModel.update({
+                isDeleted: true
+            }, {
+                where: { id },
+                returning: true,
+                plain: true,
+                transaction: t
+            });
+
+            await t.commit();
+            return db_user;
+        } catch (error) {
+            await t.rollback();
+            return error;
+        }
     }
 
     async getUsers(): Promise<any> {

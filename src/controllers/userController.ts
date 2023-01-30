@@ -1,12 +1,16 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { IUser } from '../interfaces/IUser';
 import UserMiddleware from '../middleware/user.middleware';
 import { UserModel } from '../models/User.model';
+import { UserGroupModel } from '../models/UserGroup.model';
 import UserService from '../services/userService';
+import UserGroupService from '../services/userGroupService';
+import { GroupModel } from '../models/Group.model';
 
 const router = express.Router();
-const usersService = new UserService(UserModel);
+const usersService = new UserService(UserModel, UserGroupModel);
 const userMiddleware = new UserMiddleware();
+const userGroupServive = new UserGroupService(UserGroupModel, UserModel, GroupModel);
 
 router.post('/user', userMiddleware.userValidation, async (req: Request, res: Response) => {
     try {
@@ -49,9 +53,10 @@ router.delete('/user/:id', async (req: Request, res: Response) => {
     try {
         const user = await usersService.deleteUser(+req.params.id);
         res.json(user);
-    } catch (err) {
+    } catch (error) {
         res.status(404).json({
-            errorMessage: `Unable to find a user with id: ${req.params.id}`
+            errorMessage: `'Error while trying to delete a user with id: ${req.params.id}`,
+            error
         });
     }
 });
@@ -68,6 +73,17 @@ router.get('/getAutoSuggestUsers', userMiddleware.userSuggest, async (req: Reque
             errorMessage: 'Error while trying to receive data',
             error
         });
+    }
+});
+
+router.post('/user/addUsersToGroup', userMiddleware.userGroupValidation, async (req: Request, res: Response) => {
+    try {
+        const groupId = req.body.groupId as string;
+        const userIds = req.body.userIds as string[];
+        const result = await userGroupServive.addUsersToGroup(groupId, userIds);
+        res.json(result);
+    } catch (error) {
+        res.status(404).json({ error });
     }
 });
 

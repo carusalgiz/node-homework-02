@@ -1,18 +1,11 @@
 import express, { Express } from 'express';
 import userController from './controllers/userController';
-import * as pg from 'pg';
-import { Sequelize } from 'sequelize-typescript';
+import groupController from './controllers/groupController';
 import { promises } from 'fs';
-import { UserModel } from './models/User.model';
+import sequelize from './config/connection';
 
 const app: Express = express();
-const sequelize = new Sequelize('postgres://postgres:289824@localhost:5432/homework_db', {
-    dialectModule: pg,
-    dialectOptions: {
-        multipleStatements: true
-    },
-    models: [UserModel]
-});
+
 
 async function tableInit() {
     try {
@@ -41,3 +34,4 @@ setupDB().then(() => {
 });
 
 app.use('/users', userController);
+app.use('/groups', groupController);
