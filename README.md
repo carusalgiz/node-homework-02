@@ -5,4 +5,8 @@ CRUD functionality for User
 
 Homework 03
 User data changed from local app memory to interaction with Postgres DB with ORM Sequalize
-* npm run start - run app through ts-node command and launches sql script for creating table and filling it with some example users 
+* npm run start - run app through ts-node command and launches sql script for creating table and filling it with some example users
+
+Homework 04
+Added Group and Usergroup tables
+Usergroup stores links between groups and users
