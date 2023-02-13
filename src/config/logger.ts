@@ -7,10 +7,9 @@ const logger = createLogger({
         new transports.Console({
             format: format.combine(
                 format.colorize(),
-                format.timestamp(),
                 format.simple(),
-                format.printf(({ timestamp, level, message }) => {
-                    return `[${timestamp}] ${level}: ${message}`;
+                format.printf(({ level, message }) => {
+                    return `${level}: ${message}`;
                 }))
         })
     ]

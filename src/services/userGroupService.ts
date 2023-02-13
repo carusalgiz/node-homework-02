@@ -1,5 +1,6 @@
 import { Transaction } from 'sequelize';
 import sequelize from '../config/connection';
+import { logTime } from '../middleware/logger.middleware';
 
 export default class UserGroupService {
     userGroupModel: any;
@@ -12,6 +13,7 @@ export default class UserGroupService {
         this.groupModel = groupModel;
     }
 
+    @logTime('Add Users To Group')
     async addUsersToGroup(groupId: string, userIds: string[]): Promise<any> {
         return await sequelize.transaction(async (t: Transaction) => {
             try {

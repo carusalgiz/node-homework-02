@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import sequelize from '../config/connection';
 import { IUser } from '../interfaces/IUser';
+import { logTime } from '../middleware/logger.middleware';
 
 export default class UserService {
     userModel: any;
@@ -11,14 +12,17 @@ export default class UserService {
         this.userGroupModel = userGroupModel;
     }
 
+    @logTime('Get User')
     async get(id: number): Promise<any> {
         return await this.userModel.findOne({ where: { id } });
     }
 
+    @logTime('Create User')
     async create(user: IUser): Promise<any> {
         return await this.userModel.create({ login: user.login, password: user.password, age: user.age });
     }
 
+    @logTime('Update User')
     async update(user: IUser): Promise<any> {
         const [, db_user] = await this.userModel.update({
             login: user.login,
@@ -32,6 +36,7 @@ export default class UserService {
         return db_user;
     }
 
+    @logTime('Delete User')
     async deleteUser(id: number): Promise<any> {
         const t = await sequelize.transaction();
 
@@ -60,10 +65,12 @@ export default class UserService {
         }
     }
 
+    @logTime('Get Users')
     async getUsers(): Promise<any> {
         return await this.userModel.findAll();
     }
 
+    @logTime('Get Autosuggest Users')
     async getAutoSuggestUsers(limit: number, login: string): Promise<any> {
         return await this.userModel.findAll({
             limit,

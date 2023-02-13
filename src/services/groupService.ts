@@ -1,5 +1,6 @@
 import sequelize from '../config/connection';
 import { IGroup } from '../interfaces/IGroup';
+import { logTime } from '../middleware/logger.middleware';
 
 export default class GroupService {
     groupModel: any;
@@ -10,14 +11,17 @@ export default class GroupService {
         this.userGroupModel = userGroupModel;
     }
 
+    @logTime('Get group')
     async get(id: number): Promise<any> {
         return await this.groupModel.findOne({ where: { id } });
     }
 
+    @logTime('Create Group')
     async create(group: IGroup): Promise<any> {
         return await this.groupModel.create({ name: group.name, permissions: group.permissions });
     }
 
+    @logTime('Update Group')
     async update(group: IGroup): Promise<any> {
         const [, db_group] = await this.groupModel.update({
             name: group.name,
@@ -30,6 +34,7 @@ export default class GroupService {
         return db_group;
     }
 
+    @logTime('Delete Group')
     async deleteGroup(id: number): Promise<any> {
         const t = await sequelize.transaction();
 
@@ -60,6 +65,7 @@ export default class GroupService {
         }
     }
 
+    @logTime('Get Groups')
     async getGroups(): Promise<any> {
         return await this.groupModel.findAll();
     }
