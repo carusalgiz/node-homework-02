@@ -6,12 +6,12 @@ export function logTime(method: string): MethodDecorator {
     return (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor): void => {
         const original = descriptor.value;
 
-        descriptor.value = function(...args: any[]) {
+        descriptor.value = function (...args: any[]) {
             logger.info(`[${new Date().toUTCString()}] ${method}`);
             const result = original.apply(this, args);
             return result;
-        }
-    }
+        };
+    };
 }
 
 export default class LoggerMiddleware {

@@ -1,12 +1,19 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: `${__dirname}/\config/\.env` });
+
 import express, { Express } from 'express';
 import userController from './controllers/userController';
 import groupController from './controllers/groupController';
+import authController from './controllers/authController';
 import { promises } from 'fs';
 import sequelize from './config/connection';
 import LoggerMiddleware from './middleware/logger.middleware';
+import AuthMiddleware from './middleware/auth.middleware';
+import cors from 'cors';
 
 const app: Express = express();
 const logger = new LoggerMiddleware();
+const authMiddleware = new AuthMiddleware();
 
 async function tableInit() {
     try {
@@ -36,9 +43,10 @@ setupDB().then(() => {
     console.error('Unable to connect to the database:', error);
 });
 
-app.use('/users', userController);
-app.use('/groups', groupController);
-app.use('*', logger.unhandledError);
+app.use('/users', cors(), authMiddleware.checkToken, userController);
+app.use('/groups', cors(), authMiddleware.checkToken, groupController);
+app.use('/auth', cors(), authController);
+app.use('*', cors(), logger.unhandledError);
 
 process.on('uncaughtException', logger.catchException);
 process.on('unhandledRejection', logger.catchException);

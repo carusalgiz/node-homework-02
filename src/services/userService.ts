@@ -17,6 +17,11 @@ export default class UserService {
         return await this.userModel.findOne({ where: { id } });
     }
 
+    @logTime('Get User By Login')
+    async getUserByLogin(login: string): Promise<any> {
+        return await this.userModel.findOne({ where: { login } });
+    }
+
     @logTime('Create User')
     async create(user: IUser): Promise<any> {
         return await this.userModel.create({ login: user.login, password: user.password, age: user.age });

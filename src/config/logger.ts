@@ -10,7 +10,8 @@ const logger = createLogger({
                 format.simple(),
                 format.printf(({ level, message }) => {
                     return `${level}: ${message}`;
-                }))
+                })
+            )
         })
     ]
 });
