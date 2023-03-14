@@ -17,7 +17,7 @@ router.post('/user', userMiddleware.userValidation, async (req: Request, res: Re
     try {
         const user = await usersService.create(req.body);
         res.json(user);
-    } catch (err) {
+    } catch (err) {        
         LoggerMiddleware.logRequestData(req);
         res.status(400).json({
             errorMessage: 'User with a such login has already exists'
@@ -42,13 +42,14 @@ router.put('/user/:id', userMiddleware.userValidation, async (req: Request, res:
 });
 
 router.get('/user/:id', async (req: Request, res: Response) => {
-    const user = await usersService.get(+req.params.id);
-    if (user) {
+    try {        
+        const user = await usersService.get(+req.params.id);
         res.json(user);
-    } else {
+    } catch (error) {
         LoggerMiddleware.logRequestData(req);
         res.status(404).json({
-            errorMessage: `Unable to find a user with id: ${req.params.id}`
+            errorMessage: `Unable to find a user with id: ${req.params.id}`,
+            error
         });
     }
 });
